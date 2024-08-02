@@ -23,5 +23,6 @@ from .views import *
 urlpatterns = [
     path("admin/", admin.site.urls),
 
-    path('auth/', csrf_exempt(UserListView.as_view()))
+    path('', MainListView.as_view()),
+    path('auth/', csrf_exempt(UserListView.as_view()), name='auth')
 ]
