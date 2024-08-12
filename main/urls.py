@@ -24,5 +24,6 @@ urlpatterns = [
     path("admin/", admin.site.urls),
 
     path('', MainListView.as_view()),
-    path('auth/', csrf_exempt(UserListView.as_view()), name='auth')
+    path('auth/', csrf_exempt(UserListView.as_view()), name='auth'),
+    path('upload-image/', csrf_exempt(UploadImageView.as_view()), name='upload_image')
 ]
