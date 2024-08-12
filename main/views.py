@@ -1,7 +1,17 @@
 from django.views.generic import ListView
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import (
+    HttpResponse,
+    HttpResponseBadRequest,
+    HttpResponseServerError,
+    JsonResponse
+)
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render
+from django.conf import settings
+import os
+import subprocess
+from base64 import b64encode
+import json
 from .models import User
 from .forms import *
 
@@ -36,3 +46,25 @@ class UserListView(ListView):
             return HttpResponse(status=status_code)
         else:
             return HttpResponseBadRequest()
+
+
+class UploadImageView(ListView):
+    http_method_names = ['post']
+
+    def post(self, request, *args, **kwargs):
+        filename = request.FILES['image'].name
+        with open(filename, 'wb+') as file:
+            for chunk in request.FILES['image'].chunks():
+                file.write(chunk)
+        image_base64 = b64encode(
+            open(filename, 'rb').read()).decode('ascii')
+        command = f'curl --location --request POST \
+            "https://api.imgbb.com/1/upload?expiration=2678400&key={settings.IMGBB_API_KEY}" \
+            --form "image={image_base64}"'
+        os.system(command)
+        res = json.loads(subprocess.check_output(command, shell=True))
+        if res.get('status') == 200 and res.get('success'):
+            os.remove(filename)
+            return JsonResponse({'name': filename, 'url': res['data']['url']})
+        else:
+            return HttpResponseServerError()
