@@ -65,6 +65,6 @@ class UploadImageView(ListView):
         res = json.loads(subprocess.check_output(command, shell=True))
         if res.get('status') == 200 and res.get('success'):
             os.remove(filename)
-            return JsonResponse({'name': filename, 'url': res['data']['url']})
+            return JsonResponse({'url': res['data']['url']})
         else:
             return HttpResponseServerError()
