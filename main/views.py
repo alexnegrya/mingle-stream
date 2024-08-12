@@ -1,4 +1,4 @@
-from django.views.generic import ListView
+from django.views.generic import View
 from django.http import (
     HttpResponse,
     HttpResponseBadRequest,
@@ -16,7 +16,7 @@ from .models import User
 from .forms import *
 
 
-class MainListView(ListView):
+class MainView(View):
     http_method_names = ['get']
     template_name = 'main.html'
 
@@ -24,7 +24,7 @@ class MainListView(ListView):
         return render(request, self.template_name)
 
 
-class UserListView(ListView):
+class AuthView(View):
     http_method_names = ['post']
     model = User
 
@@ -48,7 +48,16 @@ class UserListView(ListView):
             return HttpResponseBadRequest()
 
 
-class UploadImageView(ListView):
+class AvatarChangeView(View):
+    http_method_names = ['put']
+
+    def put(self, request, *args, **kwargs):
+        request.user.img_url = request.GET['img_url']
+        request.user.save()
+        return HttpResponse()
+
+
+class UploadImageView(View):
     http_method_names = ['post']
 
     def post(self, request, *args, **kwargs):

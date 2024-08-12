@@ -23,7 +23,9 @@ from .views import *
 urlpatterns = [
     path("admin/", admin.site.urls),
 
-    path('', MainListView.as_view()),
-    path('auth/', csrf_exempt(UserListView.as_view()), name='auth'),
-    path('upload-image/', csrf_exempt(UploadImageView.as_view()), name='upload_image')
+    path('', MainView.as_view()),
+    path('auth/', csrf_exempt(AuthView.as_view()), name='auth'),
+
+    path('upload-image/', csrf_exempt(UploadImageView.as_view()), name='upload_image'),
+    path('change-avatar/', csrf_exempt(AvatarChangeView.as_view()), name='change_avatar')
 ]
