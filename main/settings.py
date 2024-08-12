@@ -136,3 +136,7 @@ STATICFILES_FINDERS = ['django.contrib.staticfiles.finders.FileSystemFinder',
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+# APIs data
+IMGBB_API_KEY = os.getenv('IMGBB_API_KEY')
