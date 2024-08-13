@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -12,7 +14,10 @@
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anomain/staticnymous"></script>
 
-    {% include 'style.html' %}
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+    {% block style %}{% endblock %}
+
+    {% block scripts %}{% endblock %}
 </head>
 
 <body>

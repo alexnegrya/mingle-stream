@@ -1,0 +1,39 @@
+#main_page_content {
+    margin-top: 20vh;
+}
+
+#app_name {
+    width: 500px;
+    text-align: center;
+    font-size: 70px;
+    color: rgb(231, 231, 231);
+}
+
+#app_description {
+    width: 250px;
+    text-align: center;
+    color: rgb(180, 180, 180);
+    margin-top: 10px;
+}
+
+#auth_form {
+    width: 300px;
+    margin-top: 40px;
+}
+
+.auth-input-label {
+    margin-left: 35%;
+    color: rgb(160, 160, 160);
+}
+
+#auth_button {
+    margin-left: 24%;
+    margin-top: 10px;
+    background-color: chartreuse;
+    color: black;
+    height: 50px;
+}
+
+#auth_button:hover {
+    background-color: rgb(95, 190, 0);
+}

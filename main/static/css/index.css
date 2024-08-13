@@ -1,0 +1,15 @@
+body {
+    background-image: url("../img/main_bg_pc.jpg");
+    background-size: cover;
+}
+
+@media screen and (max-width: 1240px) {
+    body {
+        background-image: url("../img/main_bg_mobile.jpg");
+        background-size: 115%;
+    }
+}
+
+.horizontal-centered {
+    margin: 0 auto;
+}
