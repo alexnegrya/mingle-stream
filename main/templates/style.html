@@ -1,0 +1,59 @@
+{% load static %}
+
+<style>
+    body {
+        background-image: url("{% static 'main/img/main_bg_pc.jpg' %}");
+        background-size: cover;
+    }
+
+    @media screen and (max-width: 1240px) {
+        body {
+            background-image: url("{% static 'main/img/main_bg_mobile.jpg' %}");
+            background-size: 115%;
+        }
+    }
+
+    #main_page_content {
+        margin-top: 20vh;
+    }
+
+    .horizontal-centered {
+        margin: 0 auto;
+    }
+
+    #app_name {
+        width: 500px;
+        text-align: center;
+        font-size: 70px;
+        color: rgb(231, 231, 231);
+    }
+
+    #app_description {
+        width: 250px;
+        text-align: center;
+        color: rgb(180, 180, 180);
+        margin-top: 10px;
+    }
+
+    #auth_form {
+        width: 300px;
+        margin-top: 40px;
+    }
+
+    .auth-input-label {
+        margin-left: 35%;
+        color: rgb(160, 160, 160);
+    }
+
+    #auth_button {
+        margin-left: 24%;
+        margin-top: 10px;
+        background-color: chartreuse;
+        color: black;
+        height: 50px;
+    }
+
+    #auth_button:hover {
+        background-color: rgb(95, 190, 0);
+    }
+</style>

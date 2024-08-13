@@ -1,108 +1,35 @@
-{% load static %}
+{% extends 'template.html' %}
 
-<!DOCTYPE html>
-<html lang="en">
+{% block title %}Main Page{% endblock %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mingle Stream | Main page</title>
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-        crossorigin="anomain/staticnymous"></script>
-    
-    <style>
-        body {
-            background-image: url("{% static 'main/img/main_bg_pc.jpg' %}");
-            background-size: cover;
-        }
-
-        @media screen and (max-width: 1240px) {
-            body {
-                background-image: url("{% static 'main/img/main_bg_mobile.jpg' %}");
-                background-size: 115%;
-            }
-        }
-
-        #content {
-            margin-top: 20vh;
-        }
-
-        .horizontal-centered {
-            margin: 0 auto;
-        }
-
-        #app_name {
-            width: 500px;
-            text-align: center;
-            font-size: 70px;
-            color: rgb(231, 231, 231);
-        }
-
-        #app_description {
-            width: 250px;
-            text-align: center;
-            color: rgb(180, 180, 180);
-            margin-top: 10px;
-        }
-
-        #auth_form {
-            width: 300px;
-            margin-top: 40px;
-        }
-
-        .auth-input-label {
-            margin-left: 35%;
-            color: rgb(160, 160, 160);
-        }
-
-        #auth_button {
-            margin-left: 24%;
-            margin-top: 10px;
-            background-color: chartreuse;
-            color: black;
-            height: 50px;
-        }
-
-        #auth_button:hover {
-            background-color: rgb(95, 190, 0);
-        }
-    </style>
-</head>
-
-<body>
-    <div id="content">
-        <h1 id="app_name" class="horizontal-centered">Mingle Stream</h1>
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col"></div>
-                <div class="col">
-                    <h2 id="app_description" class="horizontal-centered">Chat anywhere. With anyone. Totally free.</h2>
-                </div>
-                <div class="col"></div>
+{% block content %}
+<div id="main_page_content">
+    <h1 id="app_name" class="horizontal-centered">Mingle Stream</h1>
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col"></div>
+            <div class="col">
+                <h2 id="app_description" class="horizontal-centered">Chat anywhere. With anyone. Totally free.</h2>
             </div>
-            <div class="row align-items-center">
-                <div class="col"></div>
-                <div class="col">
-                    <form id="auth_form" class="horizontal-centered" action="{% url 'auth' %}" method="post">
-                        <div class="mb-3">
-                            <label for="username" class="form-label auth-input-label">Username</label>
-                            <input type="text" class="form-control" id="username" name="username" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="password" class="form-label auth-input-label">Password</label>
-                            <input type="password" class="form-control" id="password" name="password" required>
-                        </div>
-                        <button id="auth_button" type="submit" class="btn btn-primary">Register / Log in</button>
-                    </form>
-                </div>
-                <div class="col"></div>
+            <div class="col"></div>
+        </div>
+        <div class="row align-items-center">
+            <div class="col"></div>
+            <div class="col">
+                <form id="auth_form" class="horizontal-centered" action="{% url 'auth' %}" method="post">
+                    <div class="mb-3">
+                        <label for="username" class="form-label auth-input-label">Username</label>
+                        <input type="text" class="form-control" id="username" name="username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label auth-input-label">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <button id="auth_button" type="submit" class="btn btn-primary">Register / Log in</button>
+                </form>
             </div>
+            <div class="col"></div>
         </div>
     </div>
-</body>
-
-</html>
+</div>
+{% endblock %}
