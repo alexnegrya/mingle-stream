@@ -1,7 +1,17 @@
 {% extends 'template.html' %}
+{% load static %}
 
 {% block title %}App{% endblock %}
 
-{% block content %}
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/image_modal.css' %}">
+<link rel="stylesheet" href="{% static 'css/avatar.css' %}">
+{% endblock %}
 
+{% block scripts %}
+<script src="{% static 'js/image_modal.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+{% include 'avatar.html' %}
 {% endblock %}
