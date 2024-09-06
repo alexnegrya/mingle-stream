@@ -1,0 +1,5 @@
+<div id="avatar_container" class="float-end">
+    <img id="avatar" src="{{ avatar }}" class="img-fluid img-thumbnail" data-bs-toggle="modal"
+        data-bs-target="#image_modal">
+    {% include 'image_modal.html' with img_url=avatar model='user' %}
+</div>
