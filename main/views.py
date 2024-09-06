@@ -2,16 +2,13 @@ from django.views.generic import View
 from django.http import (
     HttpResponse,
     HttpResponseBadRequest,
-    HttpResponseServerError,
-    JsonResponse
+    HttpResponseServerError
 )
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
 from django.conf import settings
 import os
-import subprocess
-from base64 import b64encode
-import json
+import imgbbpy
 from app.funcs import change_model_image
 from .models import User
 from .forms import *
@@ -59,16 +56,9 @@ class UploadImageView(View):
         with open(filename, 'wb+') as file:
             for chunk in request.FILES['image'].chunks():
                 file.write(chunk)
-        image_base64 = b64encode(
-            open(filename, 'rb').read()).decode('ascii')
-        command = f'curl --location --request POST \
-            "https://api.imgbb.com/1/upload?expiration=2678400&key={settings.IMGBB_API_KEY}" \
-            --form "image={image_base64}"'
-        os.system(command)
-        res = json.loads(subprocess.check_output(command, shell=True))
-        if res.get('status') == 200 and res.get('success'):
-            if os.path.isfile(filename): os.remove(filename)
-            change_model_image(request.POST['model'], res['data']['url'], request=request)
-            return redirect('app:app_page')
-        else:
-            return HttpResponseServerError()
+        imgbb = imgbbpy.SyncClient(settings.IMGBB_API_KEY)
+        # 31 days expiration
+        image = imgbb.upload(file=filename, name=filename, expiration=2678400)
+        if os.path.isfile(filename): os.remove(filename)
+        change_model_image(request.POST['model'], image.url, request=request)
+        return redirect('app:app_page')
