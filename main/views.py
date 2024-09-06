@@ -6,12 +6,13 @@ from django.http import (
     JsonResponse
 )
 from django.contrib.auth import authenticate, login
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.conf import settings
 import os
 import subprocess
 from base64 import b64encode
 import json
+from app.funcs import change_model_image
 from .models import User
 from .forms import *
 
@@ -30,10 +31,12 @@ class AuthView(View):
 
     def post(self, request, *args, **kwargs):
         if UserAuthForm(request.POST).is_valid():
+            is_user_created = True
             try:
                 user = User.objects.get(username=request.POST['username'])
-                if authenticate(request, username=request.POST['username'], password=request.POST['password']):
-                    status_code = 200
+                if authenticate(request, username=request.POST['username'],
+                  password=request.POST['password']):
+                    is_user_created = False
                 else:
                     return HttpResponse(status=401)
             except User.DoesNotExist:
@@ -41,20 +44,11 @@ class AuthView(View):
                     username=request.POST['username'],
                     password=request.POST['password']
                 )
-                status_code = 201
             login(request, user)
-            return HttpResponse(status=status_code)
+            print(f'User "{request.POST["username"]}" {"registered" if is_user_created else "logged in"}.')
+            return redirect('app:app_page')
         else:
             return HttpResponseBadRequest()
-
-
-class AvatarChangeView(View):
-    http_method_names = ['put']
-
-    def put(self, request, *args, **kwargs):
-        request.user.img_url = request.GET['img_url']
-        request.user.save()
-        return HttpResponse()
 
 
 class UploadImageView(View):
@@ -73,7 +67,8 @@ class UploadImageView(View):
         os.system(command)
         res = json.loads(subprocess.check_output(command, shell=True))
         if res.get('status') == 200 and res.get('success'):
-            os.remove(filename)
-            return JsonResponse({'url': res['data']['url']})
+            if os.path.isfile(filename): os.remove(filename)
+            change_model_image(request.POST['model'], res['data']['url'], request=request)
+            return redirect('app:app_page')
         else:
             return HttpResponseServerError()
