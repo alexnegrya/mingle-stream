@@ -25,8 +25,7 @@ urlpatterns = [
 
     path('', MainView.as_view()),
     path('auth/', csrf_exempt(AuthView.as_view()), name='auth'),
-    path('app/', include('app.urls')),
+    path('app/', include(('app.urls', 'app'), 'app')),
 
-    path('upload-image/', csrf_exempt(UploadImageView.as_view()), name='upload_image'),
-    path('change-avatar/', csrf_exempt(AvatarChangeView.as_view()), name='change_avatar')
+    path('upload-image/', csrf_exempt(UploadImageView.as_view()), name='upload_image')
 ]
