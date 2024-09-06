@@ -1,0 +1,51 @@
+{% load static %}
+
+<div class="modal" id="image_modal" tabindex="-1" aria-hidden="true">
+    <div class="container-fluid z-2 position-absolute h-100 text-center"
+        style="display: none; background-color: rgba(190, 190, 190, 0.960); max-width: 100vw; max-height: 100vh;"
+        id="image_modal_fullscreen_img" onclick="this.style.display = 'none'">
+        <img src="{{ img_url }}" class="img-fluid"
+            style="position: absolute; top: 0; left: 0; height: 100vh; max-width: 100vw; margin: auto; display: block; bottom: 0; margin-left: 25%;">
+    </div>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="container-fluid z-1 position-absolute h-100">
+                <div class="row h-100">
+                    <div class="col-4"></div>
+                    <div class="col-4">
+                        <img src="https://i.ibb.co/kJtJZcK/expand.png" class="img-fluid image-modal-icon"
+                            style="margin-top: 140%; width: 50%; margin-left: 25%; margin-right: 25%;"
+                            onclick="showFullscreenImage()" id="image_modal_expand">
+                    </div>
+                    <div class="col-4">
+                        <form method="post" action="{% url 'upload_image' %}" enctype="multipart/form-data"
+                            id="image_modal_upload_form">
+                            <input type="hidden" name="model" value="{{ model }}">
+                            <input type="file" name="image" accept="image/*" id="image_modal_upload_input"
+                                style="display: none;">
+                            <img src="https://i.ibb.co/6mggbX1/upload-image-colorful.png"
+                                class="img-fluid image-modal-icon float-end" style="width: 35%; margin-top: 9%;"
+                                onclick="document.getElementById('image_modal_upload_input').click()">
+                        </form>
+                        <script>
+                            var img_upload_input = document.getElementById('image_modal_upload_input')
+                            function uploadImage() {
+                                if (img_upload_input.files.length == 1) {
+                                    if (img_upload_input.files[0].size > 33554432) {
+                                        alert('File is too large, image size limit is 32MB.')
+                                        img_upload_input.value = ''
+                                    }
+                                    document.getElementById('image_modal_upload_form').submit()
+                                }
+                            }
+                            setInterval(uploadImage, 1000)
+                        </script>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <img src="{{ img_url }}" class="img-fluid rounded">
+            </div>
+        </div>
+    </div>
+</div>
