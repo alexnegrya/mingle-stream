@@ -17,6 +17,10 @@ class Chats(models.Model):
     
     class Meta:
         verbose_name_plural = 'chats'
+
+    def to_dict(self):
+        return {f: getattr(self, f) for f in (
+            'id', 'title', 'color', 'img_url', 'description', 'bg_url', 'created_at')}
     
 
 class ChatsMembers(models.Model):
