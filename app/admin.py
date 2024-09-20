@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Chats, ChatsMembers
+from .models import Chats, ChatsMembers, Messages
 
 
 @admin.register(Chats)
@@ -9,4 +9,9 @@ class ChatsAdmin(admin.ModelAdmin):
 
 @admin.register(ChatsMembers)
 class ChatsMembersAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(Messages)
+class MessagesAdmin(admin.ModelAdmin):
     pass
