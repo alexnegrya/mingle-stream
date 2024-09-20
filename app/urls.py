@@ -16,4 +16,6 @@ urlpatterns = [
 
     path('chat-messages/', MessagesView.as_view({'get': 'get_chat_messages'}), name='chat_messages'),
     path('create-message/', MessagesView.as_view({'post': 'create_message'}), name='create_message'),
+    path('change-message/', MessagesView.as_view({'patch': 'update_message'}), name='change_message'),
+    path('delete-message/', MessagesView.as_view({'delete': 'delete_message'}), name='delete_message')
 ]

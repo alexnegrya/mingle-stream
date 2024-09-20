@@ -80,12 +80,24 @@ class MessagesView(ViewSet):
             chat=Chats.objects.get(id=request.GET['chat_id']))],
             safe=False)
     
-    def create_message(self, request, *args, **kwargs):
-        message = Messages.objects.create(user=request.user,
-            chat=Chats.objects.get(id=request.data['chat_id']))
+    def _update_message_data(self, message: Messages, request):
         for field in ('text',):
             if field in request.data:
                 setattr(message, field, request.data[field])
                 message.save()
                 break
+    
+    def create_message(self, request, *args, **kwargs):
+        message = Messages.objects.create(user=request.user,
+            chat=Chats.objects.get(id=request.data['chat_id']))
+        self._update_message_data(message, request)
         return HttpResponse(status=201)
+    
+    def update_message(self, request, *args, **kwargs):
+        message = Messages.objects.get(id=request.data['message_id'])
+        self._update_message_data(message, request)
+        return HttpResponse()
+    
+    def delete_message(self, request, *args, **kwargs):
+        Messages.objects.get(id=request.data['message_id']).delete()
+        return HttpResponse()
