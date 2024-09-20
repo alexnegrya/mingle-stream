@@ -72,10 +72,20 @@ class ChatMembersView(ViewSet):
         return HttpResponse()
     
 
-class MessagesView(View):
-    http_method_names = ['get']
+class MessagesView(ViewSet):
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
 
-    def get(self, request, *args, **kwargs):
+    def get_chat_messages(self, request, *args, **kwargs):
         return JsonResponse([obj.to_dict() for obj in Messages.objects.filter(
-            chat_member__chat=Chats.objects.get(id=request.GET['chat_id']))],
+            chat=Chats.objects.get(id=request.GET['chat_id']))],
             safe=False)
+    
+    def create_message(self, request, *args, **kwargs):
+        message = Messages.objects.create(user=request.user,
+            chat=Chats.objects.get(id=request.data['chat_id']))
+        for field in ('text',):
+            if field in request.data:
+                setattr(message, field, request.data[field])
+                message.save()
+                break
+        return HttpResponse(status=201)
