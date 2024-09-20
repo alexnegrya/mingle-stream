@@ -9,7 +9,7 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from django.shortcuts import render
 from main.models import User
-from .models import Chats, ChatsMembers
+from .models import Chats, ChatsMembers, Messages
 
 
 class CsrfExemptSessionAuthentication(SessionAuthentication):
@@ -70,3 +70,12 @@ class ChatMembersView(ViewSet):
     def remove_chat_member(self, request, *args, **kwargs):
         ChatsMembers.objects.get(user__username=request.data['username']).delete()
         return HttpResponse()
+    
+
+class MessagesView(View):
+    http_method_names = ['get']
+
+    def get(self, request, *args, **kwargs):
+        return JsonResponse([obj.to_dict() for obj in Messages.objects.filter(
+            chat_member__chat=Chats.objects.get(id=request.GET['chat_id']))],
+            safe=False)
