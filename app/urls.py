@@ -14,5 +14,6 @@ urlpatterns = [
     path('add-chat-member/', ChatMembersView.as_view({'post': 'add_chat_member'}), name='add_chat_member'),
     path('delete-chat-member/', ChatMembersView.as_view({'delete': 'remove_chat_member'}), name='delete_chat_member'),
 
-    path('chat-messages/', MessagesView.as_view(), name='chat_messages')
+    path('chat-messages/', MessagesView.as_view({'get': 'get_chat_messages'}), name='chat_messages'),
+    path('create-message/', MessagesView.as_view({'post': 'create_message'}), name='create_message'),
 ]
