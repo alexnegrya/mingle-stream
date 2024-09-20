@@ -45,3 +45,12 @@ class Messages(models.Model):
     
     class Meta:
         verbose_name_plural = 'messages'
+
+    def to_dict(self):
+        d = {'id': self.id}
+        d.update({'user_img_url': self.chat_member.user.img_url,
+            'username': self.chat_member.user.username})
+        d.update({f: getattr(self, f) for f in (
+            'text', 'img_url', 'youtube_video_id', 'file_url', 'mixcloud_key',
+            'created_at')})
+        return d
