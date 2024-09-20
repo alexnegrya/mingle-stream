@@ -33,8 +33,8 @@ class ChatsMembers(models.Model):
 
 
 class Messages(models.Model):
-    chat_member = models.ForeignKey(ChatsMembers, models.CASCADE,
-        null=False, blank=False)
+    user = models.ForeignKey(User, models.CASCADE, null=False, blank=False)
+    chat = models.ForeignKey(Chats, models.CASCADE, null=False, blank=False)
     text = models.TextField(null=True, blank=True)
     img_url = models.URLField(null=True, blank=True)
     youtube_video_id = models.CharField(max_length=11, null=True, blank=True)
@@ -48,8 +48,8 @@ class Messages(models.Model):
 
     def to_dict(self):
         d = {'id': self.id}
-        d.update({'user_img_url': self.chat_member.user.img_url,
-            'username': self.chat_member.user.username})
+        d.update({'user_img_url': self.user.img_url,
+            'username': self.user.username})
         d.update({f: getattr(self, f) for f in (
             'text', 'img_url', 'youtube_video_id', 'file_url', 'mixcloud_key',
             'created_at')})
