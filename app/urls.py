@@ -3,7 +3,7 @@ from .views import *
 
 
 urlpatterns = [
-    path('', AppView.as_view(), name='app_page'),
+    path('', AppView.as_view({'get': 'get'}), name='app_page'),
 
     path('user-chats/', ChatsView.as_view({'get': 'get_user_chats'}), name='user_chats'),
     path('create-chat/', ChatsView.as_view({'post': 'create_chat'}), name='create_chat'),
@@ -16,6 +16,6 @@ urlpatterns = [
 
     path('chat-messages/', MessagesView.as_view({'get': 'get_chat_messages'}), name='chat_messages'),
     path('create-message/', MessagesView.as_view({'post': 'create_message'}), name='create_message'),
-    path('change-message/', MessagesView.as_view({'patch': 'update_message'}), name='change_message'),
-    path('delete-message/', MessagesView.as_view({'delete': 'delete_message'}), name='delete_message')
+    # path('change-message/', MessagesView.as_view({'patch': 'update_message'}), name='change_message'),
+    # path('delete-message/', MessagesView.as_view({'delete': 'delete_message'}), name='delete_message')
 ]
