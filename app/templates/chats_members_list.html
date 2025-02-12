@@ -1,0 +1,35 @@
+{% for cid, members in chats_members.items %}
+    {% if cid == chat_id %}
+        {% if members|length > 0 %}
+            {% for member in members %}
+                <form action="{% url 'app:app_page' %}" method="post"
+                id="chat_member_form_{{ chat_id }}_{{ member.id }}"
+                class="chat-member-form">
+                    <input type="hidden" name="username" value="{{ member.user.username }}">
+                    <ul class="list-group list-group-horizontal row">
+                        <li class="col-1"></li>
+                        <li class="list-group-item col-2 chat-member-form-avatar">
+                            <img src="{{ member.user.img_url }}"
+                            class="img-fluid img-thumbnail">
+                        </li>
+                        <li class="list-group-item col-6" style="font-size: 18px;
+                        padding-top: 3%;">{{ member.user.username }}</li>
+                        <li class="list-group-item col-2 chat-member-form-remove">
+                            <img src="https://i.ibb.co/g3x4n1d/trash-can.png"
+                            class="img-fluid" onclick="sendRequest('DELETE',
+                            '{% url 'app:delete_chat_member' %}',
+                            $('#chat_member_form_{{ chat_id }}_{{ member.id }}'
+                            ).serialize(), 'application/x-www-form-urlencoded');
+                            sessionStorage.setItem('chat_member_{{ chat_id }}_{{ member.id }}_hidden', 'true');
+                            $('#chat_member_form_{{ chat_id }}_{{ member.id }}').fadeOut(350);
+                            setTimeout(function () {showChatMembersText()}, 600)">
+                        </li>
+                        <li class="col-1"></li>
+                    </ul>
+                </form>
+            {% endfor %}
+        {% else %}
+            <h3 id="chat_members_text">This chat has no members...</h3>
+        {% endif %}
+    {% endif %}
+{% endfor %}
