@@ -10,6 +10,7 @@ from django.conf import settings
 import os
 import imgbbpy
 from app.funcs import change_model_image
+from app.models import Chats
 from .models import User
 from .forms import *
 
@@ -57,8 +58,14 @@ class UploadImageView(View):
             for chunk in request.FILES['image'].chunks():
                 file.write(chunk)
         imgbb = imgbbpy.SyncClient(settings.IMGBB_API_KEY)
-        # 31 days expiration
-        image = imgbb.upload(file=filename, name=filename, expiration=2678400)
-        if os.path.isfile(filename): os.remove(filename)
-        change_model_image(request.POST['model'], image.url, request=request)
+        try:
+            # 31 days expiration = 2678400
+            image = imgbb.upload(file=filename, name=filename)
+            if os.path.isfile(filename): os.remove(filename)
+            kwargs = {'request': request, 'models_classes': {'chat': Chats}}
+            kwargs.update({arg: val for arg, val in [
+                pair.split('=') for pair in request.POST['args'].split()]})
+            change_model_image(request.POST['model'], image.url, **kwargs)
+        except imgbbpy.ImgbbError as e:
+            print(f'{e.__class__.__name__}: {e}')
         return redirect('app:app_page')
