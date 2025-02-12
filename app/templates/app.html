@@ -4,14 +4,17 @@
 {% block title %}App{% endblock %}
 
 {% block style %}
-<link rel="stylesheet" href="{% static 'css/image_modal.css' %}">
 <link rel="stylesheet" href="{% static 'css/avatar.css' %}">
+<link rel="stylesheet" href="{% static 'css/chats_list.css' %}">
 {% endblock %}
 
 {% block scripts %}
+<script src="{% static 'js/app.js' %}"></script>
 <script src="{% static 'js/image_modal.js' %}"></script>
 {% endblock %}
 
 {% block content %}
+{% include 'image_modal.html' %}
+{% include 'chats_list.html' %}
 {% include 'avatar.html' %}
 {% endblock %}
