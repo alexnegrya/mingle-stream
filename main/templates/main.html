@@ -22,6 +22,7 @@
             <div class="col"></div>
             <div class="col">
                 <form id="auth_form" class="horizontal-centered" action="{% url 'auth' %}" method="post">
+                    {% csrf_token %}
                     <div class="mb-3">
                         <label for="username" class="form-label auth-input-label">Username</label>
                         <input type="text" class="form-control" id="username" name="username" required>
