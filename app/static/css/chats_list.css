@@ -48,7 +48,6 @@
 }
 #selected_chat .listed-chat-title:hover {
     cursor: pointer;
-    color: #ffaa00;
 }
 
 .listed-chat-buttons {
