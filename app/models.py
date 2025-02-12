@@ -6,7 +6,7 @@ from .funcs import get_random_hex_color
 
 class Chats(models.Model):
     owner = models.ForeignKey(User, models.CASCADE, null=False, blank=False)
-    title = models.CharField(max_length=50, null=False, blank=False)
+    title = models.CharField(max_length=25, null=False, blank=False)
     color = models.CharField(max_length=6, null=False, blank=False,
         validators=[validate_hex_str], default=get_random_hex_color)
     img_url = models.URLField(null=False, blank=False,
