@@ -1,0 +1,312 @@
+{% load static %}
+
+<script src="{% static 'js/chats_list.js' %}"></script>
+<svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+    <symbol id="check-circle-fill" viewBox="0 0 16 16">
+        <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+    </symbol>
+    <symbol id="info-fill" viewBox="0 0 16 16">
+        <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+    </symbol>
+    <symbol id="exclamation-triangle-fill" viewBox="0 0 16 16">
+        <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+    </symbol>
+</svg>
+<div id="chats_list_container" class="float-start" onmouseleave="hideButtons()">
+
+    <!-- Chat title modal -->
+    <div class="modal fade chat-modal" id="chat_title_modal" tabindex="-1"
+    aria-hidden="true" aria-labelledby="chat_title_modal_title"
+    onfocus="updateChatModalData('title')">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title" id="chat_title_modal_title">Title</h1>
+                </div>
+                <div class="modal-body">
+                    <form id="chat_title_modal_form" method="post"
+                    action="{% url 'app:app_page' %}" class="custom-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="chat_id" id="chat_title_modal_id">
+                        <div class="row chat-modal-row">
+                            <div class="col-1"></div>
+                            <input type="text" name="title" maxlength="25"
+                            class="chat-modal-input col-10 custom-input"
+                            id="chat_title_modal_input" autofocus>
+                            <div class="col-1"></div>
+                        </div>
+                        <div class="row chat-modal-row chat-modal-alert"
+                        id="chat_title_modal_alert" onclick="$(this).fadeOut(350)">
+                            <div class="col-3"></div>
+                            <div class="alert alert-success d-flex align-items-center col-6"
+                            role="alert">
+                                <svg class="bi flex-shrink-0 me-2" role="img"
+                                aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>
+                                <div style="font-size: 19px; padding-top: 6px;">
+                                    Successfully saved
+                                </div>
+                            </div>
+                            <div class="col-3"></div>
+                        </div>
+                        <div class="row chat-modal-row">
+                            <div class="col-4"></div>
+                            <button type="button" id="chat_title_modal_btn"
+                            class="col-4 chat-modal-button"
+                            onclick="sendRequest('PATCH', '{% url 'app:change_chat' %}',
+                            $('#chat_title_modal_form').serialize(),
+                            'application/x-www-form-urlencoded');
+                            saveChatData('title');
+                            $('#selected_chat .listed-chat-title b').text(
+                                $('#chat_title_modal_input').val());
+                            showChatModalAlert('title');
+                            ">Save</button>
+                            <div class="col-4"></div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Chat description modal -->
+    <div class="modal fade chat-modal" id="chat_description_modal" tabindex="-1"
+    aria-hidden="true" aria-labelledby="chat_description_modal_title"
+    onfocus="updateChatModalData('description')">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title" id="chat_description_modal_title">Description</h1>
+                </div>
+                <div class="modal-body">
+                    <form id="chat_description_modal_form" method="post"
+                    action="{% url 'app:app_page' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="chat_id" id="chat_description_modal_id">
+                        <div class="row chat-modal-row">
+                            <div class="col-1"></div>
+                            <textarea name="description" class="chat-modal-input col-10"
+                            id="chat_description_modal_input"></textarea>
+                            <div class="col-1"></div>
+                        </div>
+                        <div class="row chat-modal-row chat-modal-alert"
+                        id="chat_description_modal_alert" onclick="$(this).fadeOut(350)">
+                            <div class="col-3"></div>
+                            <div class="alert alert-success d-flex align-items-center col-6"
+                            role="alert">
+                                <svg class="bi flex-shrink-0 me-2" role="img"
+                                aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>
+                                <div style="font-size: 19px; padding-top: 6px;">
+                                    Successfully saved
+                                </div>
+                            </div>
+                            <div class="col-3"></div>
+                        </div>
+                        <div class="row chat-modal-row">
+                            <div class="col-4"></div>
+                            <button type="button" id="chat_description_modal_btn"
+                            class="col-4 chat-modal-button"
+                            onclick="sendRequest('PATCH', '{% url 'app:change_chat' %}',
+                            $('#chat_description_modal_form').serialize(),
+                            'application/x-www-form-urlencoded');
+                            saveChatData('description');
+                            showChatModalAlert('description');
+                            ">Save</button>
+                            <div class="col-4"></div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat members modal -->
+    <div class="modal fade chat-modal" id="chat_members_modal" tabindex="-1"
+    aria-hidden="true" aria-labelledby="chat_members_modal_title"
+    onmouseenter="showHideChatMembers()">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title" id="chat_members_modal_title">Members</h1>
+                </div>
+                <div class="modal-body">
+                    <div id="chat_members_modal_list"></div>
+                    <form id="chat_members_modal_form" method="post"
+                    action="{% url 'app:app_page' %}" class="custom-form">
+                        {% csrf_token %}
+                        <!-- User not found alert -->
+                        <div class="row chat-modal-row chat-modal-alert"
+                        id="chat_members_err_modal_alert" onclick="$(this).fadeOut(350)">
+                            <div class="col-3"></div>
+                            <div class="alert alert-danger d-flex align-items-center col-6"
+                            role="alert">
+                                <svg class="bi flex-shrink-0 me-2" role="img"
+                                aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+                                <div style="padding-top: 8px; padding-left: 10%;">
+                                    User was not found
+                                </div>
+                            </div>
+                            <div class="col-3"></div>
+                        </div>
+                        <!-- Member added alert -->
+                        <div class="row chat-modal-row chat-modal-alert"
+                        id="chat_members_ok_modal_alert" onclick="$(this).fadeOut(350)">
+                            <div class="col-2"></div>
+                            <div class="alert alert-success d-flex align-items-center col-8"
+                            role="alert">
+                                <svg class="bi flex-shrink-0 me-2" role="img"
+                                aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>
+                                <div style="padding-top: 8px; padding-left: 10%;">
+                                    Saved, refresh the page
+                                </div>
+                            </div>
+                            <div class="col-2"></div>
+                        </div>
+                        <input type="hidden" name="chat_id" id="chat_members_modal_id">
+                        <ul class="list-group list-group-horizontal row">
+                            <li class="col-2"></li>
+                            <li class="list-group-item col-8"
+                            id="chat_members_modal_input_container">
+                                <input name="username" class="chat-modal-input custom-input"
+                                id="chat_members_modal_input" placeholder="Username"
+                                maxlength="150" minlength="1"></input>
+                            </li>
+                            <li class="list-group-item col-2"
+                            id="chat_members_modal_btn_container">
+                                <button type="button" id="chat_members_modal_btn"
+                                class="chat-modal-button"
+                                onclick="showChatModalAlertOnStatus('members_err',
+                                404, sendRequest('POST',
+                                '{% url 'app:add_chat_member' %}',
+                                $('#chat_members_modal_form').serialize(),
+                                'application/x-www-form-urlencoded'), 200, 'members_ok')
+                                ">Add</button>
+                            </li>
+                            <li class="col-1"></li>
+                        </ul>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat delete modal -->
+    <div class="modal fade chat-modal" id="chat_delete_modal" tabindex="-1"
+    aria-hidden="true" aria-labelledby="chat_delete_modal_title">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="chat_delete_modal_title">
+                        Do you want to delete this chat?
+                    </h1>
+                </div>
+                <div class="modal-body">
+                    All messages in this chat also will be deleted.
+                </div>
+                <div class="modal-footer">
+                    <form action="{% url 'app:app_page' %}" method="post"
+                    id="chat_delete_modal_form">
+                        {% csrf_token %}
+                        <input type="hidden" name="chat_id" id="chat_delete_modal_id">
+                        <button type="button" class="btn btn-secondary"
+                        data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger"
+                        data-bs-dismiss="modal" onclick="sendRequest('DELETE',
+                        '{% url 'app:delete_chat' %}',
+                        $('#chat_delete_modal_form').serialize(),
+                        'application/x-www-form-urlencoded');
+                        setTimeout(function () {
+                        $('#chat_delete_modal_form').submit()}, 100)"
+                        >Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Listed chats -->
+    <div id="listed_chats_container">
+        {% for chat in user_chats %}
+            <div class="listed-chat container d-flex align-items-center"
+            style="float: left; margin-bottom: 5px;">
+                    <div style="display: none;" class="chat-members-list">
+                        {% include 'chats_members_list.html' with chats_members=chats_members chat_id=chat.id %}
+                    </div>
+
+                    <div class="listed-chat-title text-nowrap text-center"
+                    style="background-color: #{{ chat.color }};"
+                    onclick="$('#chat_title_modal_id').attr('value', '{{ chat.id }}');
+                    $('#chat_title_modal_input').attr('value', '{{ chat.title }}');
+                    setTimeout(function () {$('#chat_title_modal_input').focus()}, 100)">
+                        <b>{{ chat.title }}</b>
+                    </div>
+                    <div class="listed-chat-buttons collapse collapse-horizontal
+                    d-flex align-items-center"
+                    style="background-color: #{{ chat.color }};">
+                        <div style="margin: 5px; margin-right: 10px;">
+                            <img src="{{ chat.img_url }}"
+                            class="img-fluid listed-chat-image"
+                            data-bs-toggle="modal" data-bs-target="#image_modal"
+                            style="max-height: 4vh; border-radius: 25px;
+                            padding: 2px; background-color: black;"
+                            onclick="setImageModalArgs('chat', '{{ chat.img_url }}',
+                            'chat_id={{ chat.id }}')">
+                        </div>
+                    <div class="listed-chat-btn-container"
+                    onclick="$('#chat_description_modal_id').attr('value', '{{ chat.id }}');
+                    $('#chat_description_modal_input').text(
+                        {% if chat.description %}
+                            `{{ chat.description }}`
+                        {% else %}
+                            ''
+                        {% endif %}
+                    ).focus()">
+                        <img src="https://i.ibb.co/0jggBqg/text-lines.png"
+                        class="listed-chat-btn-img img-fluid"
+                        data-bs-toggle="modal" data-bs-target="#chat_description_modal">
+                    </div>
+                    <div class="listed-chat-btn-container"
+                    onclick="$('#chat_members_modal_id').attr('value', '{{ chat.id }}');
+                    $('#chat_members_modal_list').html(
+                    $('#selected_chat .chat-members-list').html());
+                    $('#chat_members_modal_input').focus()">
+                        <img src="https://i.ibb.co/mzkN6Gh/users-group.png"
+                        class="listed-chat-btn-img img-fluid"
+                        data-bs-toggle="modal" data-bs-target="#chat_members_modal">
+                    </div>
+                    <!-- <div class="listed-chat-btn-container">
+                        <img src="https://i.ibb.co/nCw0yfp/image.png"
+                        class="listed-chat-btn-img img-fluid">
+                    </div> -->
+                    <div class="listed-chat-btn-container"
+                    style="background-color: brown;"
+                    onclick="$('#chat_delete_modal_id').attr('value', '{{ chat.id }}')">
+                        <img src="https://i.ibb.co/g3x4n1d/trash-can.png"
+                        class="listed-chat-btn-img img-fluid"
+                        data-bs-toggle="modal" data-bs-target="#chat_delete_modal">
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+
+        <div class="container d-flex align-items-center" id="add_chat"
+        data-bs-toggle="modal" data-bs-target="#add_chat_modal">
+            <img src="https://i.ibb.co/pbbGRxY/plus.png" class="img-fluid">
+        </div>
+        <div class="modal fade chat-modal" id="add_chat_modal" tabindex="-1"
+        aria-hidden="true" aria-labelledby="add_chat_modal_title">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title" id="add_chat_modal_title">Chat title</h1>
+                    </div>
+                    <div class="modal-body">
+                        <form action="{% url 'app:create_chat' %}" method="post">
+                            {% csrf_token %}
+                            <input type="text" name="title" maxlength="25"
+                            id="add_chat_modal_input" class="chat-modal-input">
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
