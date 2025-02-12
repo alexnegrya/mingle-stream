@@ -1,4 +1,3 @@
-from django.views.generic import View
 from django.http import (
     HttpResponse,
     HttpResponseBadRequest,
@@ -6,46 +5,59 @@ from django.http import (
     JsonResponse
 )
 from rest_framework.viewsets import ViewSet
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
-from django.shortcuts import render
+from rest_framework.authentication import BasicAuthentication, SessionAuthentication
+from django.shortcuts import render, redirect
 from main.models import User
 from .models import Chats, ChatsMembers, Messages
+from .serializers import ChangeChatSerializer
 
 
-class CsrfExemptSessionAuthentication(SessionAuthentication):
-    def enforce_csrf(self, request):
-        return
-
-
-class AppView(View):
-    http_method_names = ['get']
+class AppView(ViewSet):
+    http_method_names = ['get', 'post', 'patch', 'delete']
     template_name = 'app.html'
+    authentication_classes = [SessionAuthentication]
+
+    def _return_response(self, request, *args, **kwargs):
+        return self.get(request, *args, **kwargs)
+
+    def __getattr__(self, name):
+        if name in ('post', 'patch', 'delete'):
+            return self._return_response
+        return super().__getattribute__(name)
 
     def get(self, request, *args, **kwargs):
+        user_chats = Chats.objects.filter(owner=request.user)
         return render(request, self.template_name, {
-            'avatar': request.user.img_url
+            'avatar': request.user.img_url,
+            'user_chats': [chat.to_dict() for chat in user_chats],
+            'chats_members': {chat.id: ChatsMembers.objects.filter(
+                chat=chat) for chat in user_chats}
         })
 
 
 class ChatsView(ViewSet):
-    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
-
-    def get_user_chats(self, request, *args, **kwargs):
-        return JsonResponse([obj.to_dict() for obj in Chats.objects.filter(
-            owner=request.user)], safe=False)
+    http_method_names = ['post', 'patch', 'delete']
+    authentication_classes = [SessionAuthentication]
 
     def create_chat(self, request, *args, **kwargs):
         Chats.objects.create(
             owner=request.user, title=request.data['title'])
-        return HttpResponse(status=201)
+        return redirect('app:app_page')
 
     def update_chat(self, request, *args, **kwargs):
-        chat = Chats.objects.get(id=request.data['chat_id'])
-        for field in ('title', 'img_url', 'description', 'bg_url'):
-            if field in request.data:
-                setattr(chat, field, request.data[field])
-        chat.save()
-        return HttpResponse()
+        serializer = ChangeChatSerializer(data=request.data, partial=True)
+        if serializer.is_valid(raise_exception=False):
+            try:
+                chat = Chats.objects.get(id=serializer.data['chat_id'])
+                for field in ('title', 'img_url', 'description', 'bg_url'):
+                    if field in serializer.data:
+                        setattr(chat, field, serializer.data[field])
+                chat.save()
+                return redirect('app:app_page')
+            except KeyError:
+                return HttpResponseBadRequest()
+        else:
+            return HttpResponseBadRequest()
 
     def delete_chat(self, request, *args, **kwargs):
         Chats.objects.get(id=request.data['chat_id']).delete()
@@ -53,19 +65,20 @@ class ChatsView(ViewSet):
 
 
 class ChatMembersView(ViewSet):
-    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
-
     def get_chat_members_usernames(self, request, *args, **kwargs):
         return JsonResponse(list(ChatsMembers.objects.filter(
             chat__id=request.query_params['chat_id']).values_list(
                 'user__username', flat=True)), safe=False)
 
     def add_chat_member(self, request, *args, **kwargs):
-        ChatsMembers.objects.create(
-            chat=Chats.objects.get(id=request.data['chat_id']),
-            user=User.objects.get(username=request.data['username'])
-        )
-        return HttpResponse(status=201)
+        try:
+            user = User.objects.get(username=request.data['username'])
+            chat = Chats.objects.get(id=request.data['chat_id'])
+            if ChatsMembers.objects.filter(user=user, chat=chat).count() < 1:
+                ChatsMembers.objects.create(user=user, chat=chat)
+            return HttpResponse()
+        except User.DoesNotExist:
+            return HttpResponse(status=404)
 
     def remove_chat_member(self, request, *args, **kwargs):
         ChatsMembers.objects.get(user__username=request.data['username']).delete()
@@ -73,8 +86,6 @@ class ChatMembersView(ViewSet):
     
 
 class MessagesView(ViewSet):
-    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
-
     def get_chat_messages(self, request, *args, **kwargs):
         return JsonResponse([obj.to_dict() for obj in Messages.objects.filter(
             chat=Chats.objects.get(id=request.GET['chat_id']))],
